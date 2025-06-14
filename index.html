@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>St. Charles Academy - Test IQ</title>
+    <style>
+        /* --- Global Styles & Fonts --- */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto+Mono:wght@400;700&display=swap');
+
+        :root {
+            --primary-color: #003366; /* Deep Blue */
+            --secondary-color: #FFD700; /* Gold */
+            --light-gray: #f4f4f9;
+            --dark-gray: #333;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --white-color: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);
+        }
+
+        .container {
+            width: 95%;
+            max-width: 900px;
+            background: var(--white-color);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border-top: 5px solid var(--primary-color);
+        }
+
+        /* --- Page Sections --- */
+        .page {
+            display: none;
+            padding: 40px;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* --- Header Styles --- */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header img {
+            width: 80px;
+            margin-bottom: 10px;
+        }
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 2.2rem;
+            margin-bottom: 5px;
+        }
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* --- Form & Input Styles --- */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+        }
+        .passport-preview {
+            width: 100px;
+            height: 100px;
+            border: 2px dashed #ccc;
+            border-radius: 50%;
+            margin: 10px auto;
+            background-size: cover;
+            background-position: center;
+            background-color: #e9e9e9;
+        }
+
+        /* --- Button Styles --- */
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            font-family: 'Poppins', sans-serif;
+        }
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--white-color);
+        }
+        .btn-primary:hover {
+            background-color: #002244;
+            transform: translateY(-2px);
+        }
+
+        /* --- Link & Helper Text Styles --- */
+        .auth-links {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .auth-links a {
+            color: var(--primary-color);
+            text-decoration: none;
+            margin: 0 10px;
+            font-weight: 500;
+        }
+        .auth-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* --- Exam Page Specific Styles --- */
+        #exam-page .exam-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--primary-color);
+            color: var(--white-color);
+            padding: 15px 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        #exam-page .exam-header h2 {
+            font-size: 1.2rem;
+        }
+        #exam-page #timer {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--secondary-color);
+            color: var(--primary-color);
+            padding: 5px 15px;
+            border-radius: 5px;
+        }
+        #question-container {
+            max-height: 60vh;
+            overflow-y: auto;
+            padding-right: 15px;
+        }
+        .question-block {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-left: 5px solid var(--primary-color);
+            border-radius: 8px;
+            background: #fafafa;
+        }
+        .question-block p.question-text {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+        .question-block .options label {
+            display: block;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: var(--white-color);
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .question-block .options label:hover {
+            background-color: #eef5ff;
+            border-color: var(--primary-color);
+        }
+        .question-block .options input[type="radio"] {
+            margin-right: 10px;
+            accent-color: var(--primary-color);
+        }
+        .submit-btn-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .btn-submit {
+            background-color: var(--success-color);
+            color: white;
+            width: 50%;
+        }
+         .btn-submit:hover {
+            background-color: #218838;
+        }
+
+        /* --- Result Page Styles --- */
+        #result-page .result-box {
+            text-align: center;
+            padding: 40px;
+        }
+        #result-page h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        #result-page #score-display {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        #result-page #message-display {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        #result-page .pass {
+            color: var(--success-color);
+        }
+        #result-page .fail {
+            color: var(--danger-color);
+        }
+        
+        /* --- Admin Page Styles --- */
+        #admin-dashboard-page h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        #results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        #results-table th, #results-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        #results-table th {
+            background-color: var(--primary-color);
+            color: var(--white-color);
+            font-weight: 600;
+        }
+        #results-table tr:nth-child(even) {
+            background-color: var(--light-gray);
+        }
+        #results-table tr:hover {
+            background-color: #e0e8f0;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- ====================== LOGIN PAGE ====================== -->
+        <div id="login-page" class="page active">
+            <div class="header">
+                <img src="image/1000043837.jpg" alt="St. Charles Academy Logo">
+                <h1>St. Charles Academy</h1>
+                <p>TEST IQ</p>
+            </div>
+            
+            <div class="passport-preview" id="login-passport-preview"></div>
+
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-username">Username</label>
+                    <input type="text" id="login-username" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="stream-select">Choose Your Stream</label>
+                    <select id="stream-select" required>
+                        <option value="" disabled selected>-- Select Stream --</option>
+                        <option value="Science">Science</option>
+                        <option value="Art">Art</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Login to Exam</button>
+            </form>
+            <div class="auth-links">
+                <a href="#" id="show-signup">First time user? Sign Up</a>
+                <a href="#" id="forgot-password">Forgot Password?</a>
+            </div>
+             <div class="auth-links" style="margin-top: 30px;">
+                <a href="#" id="show-admin-login" style="color: var(--danger-color);">Admin Login</a>
+            </div>
+        </div>
+
+        <!-- ====================== SIGN UP PAGE ====================== -->
+        <div id="signup-page" class="page">
+            <div class="header">
+                <h1>Create Your Account</h1>
+                <p>Register to take the entrance exam.</p>
+            </div>
+            <form id="signup-form">
+                <div class="form-group">
+                    <label for="signup-username">Username</label>
+                    <input type="text" id="signup-username" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" required>
+                </div>
+                 <div class="form-group">
+                    <label for="signup-photo">Passport Photo URL</label>
+                    <input type="image" id="signup-photo" placeholder="image.jpg">
+                </div>
+                <button type="submit" class="btn btn-primary">Sign Up</button>
+            </form>
+            <div class="auth-links">
+                <a href="#" id="show-login">Already have an account? Login</a>
+            </div>
+        </div>
+        
+        <!-- ====================== EXAM PAGE ====================== -->
+        <div id="exam-page" class="page">
+            <div class="exam-header">
+                <div>
+                    <h2 id="student-name"></h2>
+                    <p id="student-stream"></p>
+                </div>
+                <div id="timer">20:00</div>
+            </div>
+            
+            <form id="exam-form">
+                <div id="question-container">
+                    <!-- Questions will be dynamically inserted here -->
+                </div>
+                <div class="submit-btn-container">
+                    <button type="submit" class="btn btn-submit">Submit Exam</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- ====================== RESULT PAGE ====================== -->
+        <div id="result-page" class="page">
+            <div class="result-box">
+                <h2>Exam Result</h2>
+                <p id="score-display">0%</p>
+                <p id="message-display"></p>
+                <p style="margin-top: 20px;">You can now close this window.</p>
+            </div>
+        </div>
+
+        <!-- ====================== ADMIN LOGIN PAGE ====================== -->
+        <div id="admin-login-page" class="page">
+            <div class="header">
+                <h1>Admin Portal</h1>
+                <p>Please login to view results.</p>
+            </div>
+            <form id="admin-login-form">
+                <div class="form-group">
+                    <label for="admin-username">Admin Username</label>
+                    <input type="text" id="admin-username" required>
+                </div>
+                <div class="form-group">
+                    <label for="admin-password">Admin Password</label>
+                    <input type="password" id="admin-password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Admin Login</button>
+            </form>
+             <div class="auth-links">
+                <a href="#" id="show-student-login">Back to Student Login</a>
+            </div>
+        </div>
+
+        <!-- ====================== ADMIN DASHBOARD PAGE ====================== -->
+        <div id="admin-dashboard-page" class="page">
+             <div class="header" style="display:flex; justify-content:space-between; align-items:center;">
+                <h2>Passed Students' Results</h2>
+                <button id="admin-logout-btn" class="btn btn-primary" style="width: auto; padding: 10px 20px;">Logout</button>
+            </div>
+            <p>Only students who scored 50% or higher are shown below.</p>
+            <table id="results-table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Stream</th>
+                        <th>Score</th>
+                        <th>Percentage</th>
+                        <th>Grade</th>
+                    </tr>
+                </thead>
+                <tbody id="results-body">
+                    <!-- Admin results will be dynamically inserted here -->
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    // --- STATE MANAGEMENT ---
+    let currentUser = null;
+    let timerInterval = null;
+    const EXAM_DURATION_MINUTES = 20;
+
+    // --- DATABASE (Local Storage Simulation) ---
+    // In a real application, this would be a server-side database.
+    const db = {
+        getUsers: () => JSON.parse(localStorage.getItem('sca_users') || '{}'),
+        saveUsers: (users) => localStorage.setItem('sca_users', JSON.stringify(users)),
+    };
+    
+    // --- ADMIN CREDENTIALS ---
+    const adminCredentials = {
+        username: 'admin',
+        password: 'SCA_Admin_2024!' // A slightly more secure default password
+    };
+
+    // --- QUESTIONS DATABASE ---
+    // These are designed to be tough. Easy for maintenance team to edit.
+    const allQuestions = {
+        english: [
+            { q: "Which of the following sentences uses the subjunctive mood correctly?", options: ["If I was you, I would invest.", "I wish I was on a beach right now.", "The board requires that he be present at the meeting."], answer: "The board requires that he be present at the meeting." },
+            { q: "Identify the figure of speech in: 'The wind whispered through the tall grass.'", options: ["Metaphor", "Personification", "Hyperbole"], answer: "Personification" },
+            { q: "The antonym of 'esoteric' is:", options: ["Commonplace", "Mysterious", "Complex"], answer: "Commonplace" },
+            { q: "Choose the word that is spelled correctly:", options: ["Mischievious", "Accomodate", "Conscientious"], answer: "Conscientious" },
+            { q: "What is the primary theme in George Orwell's '1984'?", options: ["The dangers of totalitarianism", "The pursuit of romantic love", "The beauty of nature"], answer: "The dangers of totalitarianism" },
+            { q: "'He is a man of letters.' This idiomatic expression means he is:", options: ["A postman", "A scholarly or literary person", "A person who writes many letters"], answer: "A scholarly or literary person" },
+            { q: "Which sentence demonstrates a dangling modifier?", options: ["Having finished the assignment, the TV was turned on.", "After finishing the assignment, I turned on the TV.", "I turned on the TV after the assignment was finished."], answer: "Having finished the assignment, the TV was turned on." },
+            { q: "The plural form of 'terminus' is:", options: ["Terminuses", "Termini", "Termina"], answer: "Termini" },
+            { q: "A 'Pyrrhic victory' is a victory that:", options: ["Is achieved with little effort", "Comes at a great cost", "Is celebrated by all"], answer: "Comes at a great cost" },
+            { q: "Which of these is a complex sentence?", options: ["The cat sat on the mat.", "The cat sat on the mat, and the dog barked.", "Because the dog barked, the cat ran away."], answer: "Because the dog barked, the cat ran away." }
+        ],
+        mathematics: [
+            { q: "If a circle has a circumference of 16π cm, what is its area?", options: ["16π cm²", "64π cm²", "256π cm²"], answer: "64π cm²" },
+            { q: "Solve for x: log₂(x) + log₂(x-2) = 3", options: ["x = 4", "x = -2", "x = 4 and x = -2"], answer: "x = 4" },
+            { q: "A bag contains 5 red balls and 3 blue balls. If two balls are drawn without replacement, what is the probability that both are red?", options: ["25/64", "5/14", "1/4"], answer: "5/14" },
+            { q: "What is the sum of the interior angles of a heptagon (7-sided polygon)?", options: ["900°", "1080°", "1260°"], answer: "900°" },
+            { q: "If f(x) = 2x² + 5 and g(x) = x - 3, what is f(g(4))?", options: ["7", "21", "37"], answer: "7" },
+            { q: "The derivative of y = sin(x²) with respect to x is:", options: ["cos(x²)", "2xcos(x²)", "2sin(x)cos(x)"], answer: "2xcos(x²)" },
+            { q: "What is the 10th term of the geometric sequence 3, 6, 12, ...?", options: ["1536", "3072", "768"], answer: "1536" },
+            { q: "A train travels 120km in 1.5 hours. What is its average speed in meters per second?", options: ["22.2 m/s", "80 m/s", "30 m/s"], answer: "22.2 m/s" },
+            { q: "If the determinant of a 2x2 matrix [[a, b], [c, d]] is 10, and a new matrix is formed by doubling each element, what is the new determinant?", options: ["20", "40", "100"], answer: "40" },
+            { q: "Simplify: (x³ - 8) / (x - 2)", options: ["x² + 4", "x² - 2x + 4", "x² + 2x + 4"], answer: "x² + 2x + 4" }
+        ],
+        // --- SCIENCE SUBJECTS ---
+        physics: [
+            { q: "According to Einstein's theory of special relativity, which of the following is NOT constant for all observers?", options: ["The speed of light in a vacuum", "The laws of physics", "The passage of time"], answer: "The passage of time" },
+            { q: "An object with a mass of 5kg is accelerated from rest to 10m/s in 2 seconds. What is the net force applied?", options: ["25 N", "50 N", "10 N"], answer: "25 N" },
+            { q: "Which phenomenon demonstrates the wave nature of light?", options: ["The photoelectric effect", "Diffraction", "Compton scattering"], answer: "Diffraction" },
+            { q: "Pascal's principle is most relevant to which field?", options: ["Thermodynamics", "Hydraulics", "Optics"], answer: "Hydraulics" },
+            { q: "The half-life of Carbon-14 is approximately 5730 years. If a sample starts with 100g, how much will remain after 17190 years?", options: ["50g", "25g", "12.5g"], answer: "12.5g" },
+            { q: "What is the unit of magnetic flux density?", options: ["Weber", "Tesla", "Henry"], answer: "Tesla" },
+            { q: "A concave mirror produces a real, inverted image the same size as the object. Where is the object placed?", options: ["At the focal point (F)", "At the center of curvature (2F)", "Between F and the mirror"], answer: "At the center of curvature (2F)" },
+            { q: "The 'redshift' of light from distant galaxies is evidence for:", options: ["The expansion of the universe", "The existence of black holes", "The bending of spacetime"], answer: "The expansion of the universe" },
+            { q: "What is the total resistance of a 10Ω and a 20Ω resistor connected in parallel?", options: ["30Ω", "15Ω", "6.67Ω"], answer: "6.67Ω" },
+            { q: "Entropy is a measure of:", options: ["The total energy in a system", "The disorder or randomness in a system", "The heat capacity of a substance"], answer: "The disorder or randomness in a system" }
+        ],
+        chemistry: [
+            { q: "What is the hybridization of the central carbon atom in ethyne (C₂H₂)?", options: ["sp³", "sp²", "sp"], answer: "sp" },
+            { q: "Which of the following is the strongest type of intermolecular force?", options: ["London dispersion forces", "Dipole-dipole interactions", "Hydrogen bonding"], answer: "Hydrogen bonding" },
+            { q: "According to Le Chatelier's principle, what happens to the equilibrium N₂(g) + 3H₂(g) ⇌ 2NH₃(g) if the pressure is increased?", options: ["Shifts to the left", "Shifts to the right", "No change"], answer: "Shifts to the right" },
+            { q: "What is the pH of a 0.001 M solution of HCl?", options: ["1", "3", "11"], answer: "3" },
+            { q: "The process of coating iron with zinc to prevent rusting is called:", options: ["Electroplating", "Galvanization", "Anodizing"], answer: "Galvanization" },
+            { q: "Which functional group defines an aldehyde?", options: ["-OH", "-COOH", "-CHO"], answer: "-CHO" },
+            { q: "Balance the following redox reaction in acidic solution: MnO₄⁻ + Fe²⁺ → Mn²⁺ + Fe³⁺. What is the stoichiometric coefficient for H⁺?", options: ["4", "8", "2"], answer: "8" },
+            { q: "Which element has the electron configuration 1s²2s²2p⁶3s²3p⁵?", options: ["Fluorine", "Chlorine", "Bromine"], answer: "Chlorine" },
+            { q: "An isomer of a molecule has:", options: ["The same molecular formula but different structure", "The same structure but different molecular formula", "Different numbers of neutrons"], answer: "The same molecular formula but different structure" },
+            { q: "Which of these is a thermosetting polymer?", options: ["Polyethylene", "Bakelite", "PVC"], answer: "Bakelite" }
+        ],
+        biology: [
+            { q: "In which stage of meiosis does crossing over occur?", options: ["Prophase I", "Metaphase I", "Prophase II"], answer: "Prophase I" },
+            { q: "The 'powerhouse' of the cell, responsible for ATP production, is the:", options: ["Nucleus", "Ribosome", "Mitochondrion"], answer: "Mitochondrion" },
+            { q: "Which of the following is the correct path of blood flow from the heart to the body?", options: ["Right Ventricle -> Lungs -> Left Atrium -> Left Ventricle -> Aorta", "Left Ventricle -> Aorta -> Body", "Right Atrium -> Right Ventricle -> Pulmonary Vein -> Lungs"], answer: "Left Ventricle -> Aorta -> Body" },
+            { q: "In DNA, adenine pairs with:", options: ["Guanine", "Cytosine", "Thymine"], answer: "Thymine" },
+            { q: "What is the primary function of the xylem in plants?", options: ["Transport of sugars", "Transport of water and minerals", "Photosynthesis"], answer: "Transport of water and minerals" },
+            { q: "Which part of the brain is primarily responsible for balance and coordination?", options: ["Cerebrum", "Cerebellum", "Medulla Oblongata"], answer: "Cerebellum" },
+            { q: "Mendel's Law of Segregation states that:", options: ["Allele pairs separate during gamete formation", "Traits are inherited independently of each other", "Dominant traits mask recessive traits"], answer: "Allele pairs separate during gamete formation" },
+            { q: "Which of these is NOT part of the human endocrine system?", options: ["Adrenal gland", "Pituitary gland", "Salivary gland"], answer: "Salivary gland" },
+            { q: "The process by which bacteria convert atmospheric nitrogen into ammonia is called:", options: ["Nitrification", "Denitrification", "Nitrogen fixation"], answer: "Nitrogen fixation" },
+            { q: "What is a vector in the context of gene technology?", options: ["A disease-causing organism", "A DNA molecule used to carry foreign genetic material into another cell", "An antibody"], answer: "A DNA molecule used to carry foreign genetic material into another cell" }
+        ],
+        // --- ARTS SUBJECTS ---
+        government: [
+            { q: "A system of government where the component units are stronger than the central authority is known as:", options: ["Federalism", "Confederalism", "Unitarianism"], answer: "Confederalism" },
+            { q: "Which political philosopher is associated with the concept of the 'Social Contract' where people surrender some freedoms for state protection?", options: ["Karl Marx", "Jean-Jacques Rousseau", "Niccolò Machiavelli"], answer: "Jean-Jacques Rousseau" },
+            { q: "The principle of 'Separation of Powers' is primarily intended to:", options: ["Ensure efficient governance", "Prevent the abuse of power", "Promote a single party state"], answer: "Prevent the abuse of power" },
+            { q: "What is a 'bicameral legislature'?", options: ["A parliament with two chambers or houses", "A government run by two leaders", "A law-making body that meets twice a year"], answer: "A parliament with two chambers or houses" },
+            { q: "In a parliamentary system of government, the Head of Government is the:", options: ["President", "Monarch", "Prime Minister"], answer: "Prime Minister" },
+            { q: "The process by which a legislative body levels charges against a government official is called:", options: ["Veto", "Filibuster", "Impeachment"], answer: "Impeachment" },
+            { q: "Which of the following is NOT a feature of a democracy?", options: ["Free and fair elections", "Rule of law", "Supremacy of the party"], answer: "Supremacy of the party" },
+            { q: "A written constitution that is difficult to amend is described as:", options: ["Flexible", "Rigid", "Unwritten"], answer: "Rigid" },
+            { q: "The concept of 'checks and balances' is best exemplified by:", options: ["The President's power to veto legislation", "The military's loyalty to the state", "The civil service's neutrality"], answer: "The President's power to veto legislation" },
+            { q: "What does the term 'suffrage' refer to?", options: ["The suffering of the masses", "The right to vote", "The duty of a citizen"], answer: "The right to vote" }
+        ],
+        economics: [
+            { q: "If the price elasticity of demand for a product is -0.5, the demand is considered:", options: ["Elastic", "Inelastic", "Unitary elastic"], answer: "Inelastic" },
+            { q: "What is 'opportunity cost'?", options: ["The total price of an opportunity", "The cost of the next best alternative forgone", "The monetary cost of a good or service"], answer: "The cost of the next best alternative forgone" },
+            { q: "Which of the following is a primary tool of monetary policy?", options: ["Government spending", "Taxation", "Open market operations"], answer: "Open market operations" },
+            { q: "The economic problem of scarcity arises because:", options: ["Human wants are unlimited while resources are finite", "Resources are poorly distributed", "Governments mismanage the economy"], answer: "Human wants are unlimited while resources are finite" },
+            { q: "A market structure with a single seller of a unique product is called a:", options: ["Perfect competition", "Oligopoly", "Monopoly"], answer: "Monopoly" },
+            { q: "What does GDP (Gross Domestic Product) measure?", options: ["The total income of a country's citizens", "The total value of all final goods and services produced within a country's borders", "The total amount of government debt"], answer: "The total value of all final goods and services produced within a country's borders" },
+            { q: "Inflation is defined as:", options: ["A sustained increase in the general price level", "A decrease in the unemployment rate", "An increase in the value of a currency"], answer: "A sustained increase in the general price level" },
+            { q: "The 'Laffer Curve' illustrates the theoretical relationship between:", options: ["Inflation and unemployment", "Tax rates and tax revenue", "Supply and demand"], answer: "Tax rates and tax revenue" },
+            { q: "Which type of unemployment occurs due to a mismatch between the skills workers have and the skills needed by employers?", options: ["Cyclical", "Frictional", "Structural"], answer: "Structural" },
+            { q: "Goods that are non-excludable and non-rivalrous are known as:", options: ["Private goods", "Public goods", "Merit goods"], answer: "Public goods" }
+        ],
+        current_affairs_general_knowledge: [
+            { q: "The international organization OPEC is primarily concerned with the policy of which commodity?", options: ["Gold", "Petroleum", "Diamonds"], answer: "Petroleum" },
+            { q: "The 'BRICS' group of emerging economies consists of Brazil, Russia, India, China, and which other country?", options: ["South Africa", "Singapore", "Saudi Arabia"], answer: "South Africa" },
+        	{ q: "Who is the current Secretary-General of the United Nations (as of early 2024)?", options: ["Ban Ki-moon", "Kofi Annan", "António Guterres"], answer: "António Guterres" },
+            { q: "The 2028 Summer Olympics are scheduled to be held in which city?", options: ["Paris", "Los Angeles", "Brisbane"], answer: "Los Angeles" },
+            { q: "The Suez Canal connects which two bodies of water?", options: ["Atlantic and Pacific Oceans", "Mediterranean Sea and Red Sea", "Black Sea and Mediterranean Sea"], answer: "Mediterranean Sea and Red Sea" },
+            { q: "What is the largest rainforest in the world?", options: ["The Congo Rainforest", "The Daintree Rainforest", "The Amazon Rainforest"], answer: "The Amazon Rainforest" },
+            { q: "The 'Kyoto Protocol' is an international treaty that commits state parties to reduce:", options: ["Nuclear weapons", "Poverty", "Greenhouse gas emissions"], answer: "Greenhouse gas emissions" },
+            { q: "Which country is NOT a permanent member of the UN Security Council?", options: ["France", "Germany", "United Kingdom"], answer: "Germany" },
+            { q: "The study of earthquakes is called:", options: ["Seismology", "Volcanology", "Meteorology"], answer: "Seismology" },
+            { q: "In what year did the World Wide Web become publicly available?", options: ["1985", "1991", "1999"], answer: "1991" }
+        ]
+    };
+
+    // --- DOM ELEMENT SELECTORS ---
+    const pages = document.querySelectorAll('.page');
+    const loginForm = document.getElementById('login-form');
+    const signupForm = document.getElementById('signup-form');
+    const examForm = document.getElementById('exam-form');
+    const adminLoginForm = document.getElementById('admin-login-form');
+
+    const showSignupLink = document.getElementById('show-signup');
+    const showLoginLink = document.getElementById('show-login');
+    const forgotPasswordLink = document.getElementById('forgot-password');
+    const showAdminLoginLink = document.getElementById('show-admin-login');
+    const showStudentLoginLink = document.getElementById('show-student-login');
+    const adminLogoutBtn = document.getElementById('admin-logout-btn');
+
+    // --- UI NAVIGATION ---
+    const showPage = (pageId) => {
+        pages.forEach(page => {
+            page.classList.remove('active');
+            if (page.id === pageId) {
+                page.classList.add('active');
+            }
+        });
+    };
+
+    // --- EVENT LISTENERS FOR PAGE NAVIGATION ---
+    showSignupLink.addEventListener('click', (e) => { e.preventDefault(); showPage('signup-page'); });
+    showLoginLink.addEventListener('click', (e) => { e.preventDefault(); showPage('login-page'); });
+    showAdminLoginLink.addEventListener('click', (e) => { e.preventDefault(); showPage('admin-login-page'); });
+    showStudentLoginLink.addEventListener('click', (e) => { e.preventDefault(); showPage('login-page'); });
+    adminLogoutBtn.addEventListener('click', (e) => { e.preventDefault(); showPage('login-page'); });
+
+    forgotPasswordLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        alert('Password recovery is a premium feature. Please contact the school administration.');
+    });
+
+    // --- USER AUTHENTICATION LOGIC ---
+    signupForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const username = document.getElementById('signup-username').value.trim();
+        const password = document.getElementById('signup-password').value;
+        const photo = document.getElementById('signup-photo').value.trim();
+
+        if (!username || !password) {
+            alert('All fields are required.');
+            return;
+        }
+
+        const users = db.getUsers();
+        if (users[username]) {
+            alert('Username already exists. Please choose another one.');
+            return;
+        }
+
+        users[username] = { password, photo, hasTakenExam: false, score: null, stream: null };
+        db.saveUsers(users);
+        alert('Sign up successful! You can now log in.');
+        showPage('login-page');
+        signupForm.reset();
+    });
+
+    loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const username = document.getElementById('login-username').value.trim();
+        const password = document.getElementById('login-password').value;
+        const stream = document.getElementById('stream-select').value;
+        
+        if (!username || !password || !stream) {
+            alert('Please fill in all fields and select a stream.');
+            return;
+        }
+
+        const users = db.getUsers();
+        const user = users[username];
+
+        if (!user) {
+            alert('Invalid username or password.');
+            return;
+        }
+
+        if (user.password !== password) {
+            alert('Invalid username or password.');
+            return;
+        }
+
+        if (user.hasTakenExam) {
+            alert('Sorry, you have already completed the exam for this session. Please try again next session.');
+            return;
+        }
+
+        currentUser = { username, stream, photo: user.photo };
+        startExam();
+    });
+    
+    // Update passport preview on username input
+    document.getElementById('login-username').addEventListener('input', (e) => {
+        const username = e.target.value.trim();
+        const users = db.getUsers();
+        const user = users[username];
+        const preview = document.getElementById('login-passport-preview');
+        if (user && user.photo) {
+            preview.style.backgroundImage = `url(${user.photo})`;
+        } else {
+            preview.style.backgroundImage = 'none';
+        }
+    });
+
+    // --- EXAM LOGIC ---
+    const startExam = () => {
+        loadQuestions();
+        startTimer();
+        document.getElementById('student-name').textContent = `Student: ${currentUser.username}`;
+        document.getElementById('student-stream').textContent = `Stream: ${currentUser.stream}`;
+        showPage('exam-page');
+    };
+
+    const loadQuestions = () => {
+        const questionContainer = document.getElementById('question-container');
+        questionContainer.innerHTML = '';
+        
+        let examQuestions = [
+            ...allQuestions.english,
+            ...allQuestions.mathematics
+        ];
+
+        if (currentUser.stream === 'Science') {
+            examQuestions = [...examQuestions, ...allQuestions.physics, ...allQuestions.chemistry, ...allQuestions.biology];
+        } else { // Art
+            examQuestions = [...examQuestions, ...allQuestions.government, ...allQuestions.economics, ...allQuestions.current_affairs_general_knowledge];
+        }
+        
+        // Save the final question list to the current user object for marking
+        currentUser.questions = examQuestions;
+
+        examQuestions.forEach((q, index) => {
+            const questionBlock = document.createElement('div');
+            questionBlock.className = 'question-block';
+            questionBlock.innerHTML = `
+                <p class="question-text">${index + 1}. ${q.q}</p>
+                <div class="options">
+                    ${q.options.map(option => `
+                        <label>
+                            <input type="radio" name="question-${index}" value="${option}" required>
+                            ${option}
+                        </label>
+                    `).join('')}
+                </div>
+            `;
+            questionContainer.appendChild(questionBlock);
+        });
+    };
+
+    const startTimer = () => {
+        let timeRemaining = EXAM_DURATION_MINUTES * 60;
+        const timerElement = document.getElementById('timer');
+
+        timerInterval = setInterval(() => {
+            timeRemaining--;
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            timerElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+            if (timeRemaining <= 300) { // Last 5 minutes
+                timerElement.style.color = 'var(--danger-color)';
+            }
+            
+            if (timeRemaining <= 0) {
+                clearInterval(timerInterval);
+                alert("Time's up! Your exam will be submitted automatically.");
+                submitExam();
+            }
+        }, 1000);
+    };
+
+    examForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const confirmed = confirm('Are you sure you want to submit your exam? You cannot make any more changes.');
+        if (confirmed) {
+            submitExam();
+        }
+    });
+
+    const submitExam = () => {
+        clearInterval(timerInterval);
+        const score = calculateScore();
+        const users = db.getUsers();
+        
+        users[currentUser.username].hasTakenExam = true;
+        users[currentUser.username].score = score;
+        users[currentUser.username].stream = currentUser.stream; // Save stream info
+        db.saveUsers(users);
+
+        displayResult(score);
+        showPage('result-page');
+    };
+
+    const calculateScore = () => {
+        let score = 0;
+        const questions = currentUser.questions;
+        questions.forEach((q, index) => {
+            const selectedOption = document.querySelector(`input[name="question-${index}"]:checked`);
+            if (selectedOption && selectedOption.value === q.answer) {
+                score += 2; // Each question is 2 marks
+            }
+        });
+        return score;
+    };
+
+    const displayResult = (score) => {
+        const totalMarks = 100;
+        const percentage = score; // Since score is already out of 100
+        const scoreDisplay = document.getElementById('score-display');
+        const messageDisplay = document.getElementById('message-display');
+
+        scoreDisplay.textContent = `${percentage}%`;
+        if (percentage >= 50) {
+            messageDisplay.textContent = 'CONGRATS! You have qualified for the next stage.';
+            messageDisplay.className = 'pass';
+            scoreDisplay.className = 'pass';
+        } else {
+            messageDisplay.textContent = 'Sorry, you did not qualify. You have to try again next session.';
+            messageDisplay.className = 'fail';
+            scoreDisplay.className = 'fail';
+        }
+    };
+    
+    // --- ADMIN LOGIC ---
+    adminLoginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const username = document.getElementById('admin-username').value;
+        const password = document.getElementById('admin-password').value;
+        
+        if (username === adminCredentials.username && password === adminCredentials.password) {
+            loadAdminDashboard();
+            showPage('admin-dashboard-page');
+        } else {
+            alert('Invalid admin credentials.');
+        }
+        adminLoginForm.reset();
+    });
+
+    const loadAdminDashboard = () => {
+        const resultsBody = document.getElementById('results-body');
+        resultsBody.innerHTML = '';
+        const users = db.getUsers();
+        
+        const passedStudents = Object.entries(users).filter(([username, data]) => data.score !== null && data.score >= 50);
+
+        if (passedStudents.length === 0) {
+            resultsBody.innerHTML = `<tr><td colspan="5" style="text-align:center;">No students have passed the exam yet.</td></tr>`;
+            return;
+        }
+
+        passedStudents.forEach(([username, data]) => {
+            const grade = getGrade(data.score);
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${username}</td>
+                <td>${data.stream}</td>
+                <td>${data.score}</td>
+                <td>${data.score}%</td>
+                <td>${grade}</td>
+            `;
+            resultsBody.appendChild(row);
+        });
+    };
+    
+    const getGrade = (score) => {
+        if (score >= 90) return 'A+ (Distinction)';
+        if (score >= 80) return 'A (Excellent)';
+        if (score >= 70) return 'B (Very Good)';
+        if (score >= 60) return 'C (Good)';
+        if (score >= 50) return 'D (Pass)';
+        return 'F (Fail)';
+    }
+
+});
+</script>
+
+</body>
+</html>
